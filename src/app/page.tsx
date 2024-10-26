@@ -120,7 +120,7 @@ export default function Home() {
                   className="w-24 h-24 object-cover rounded-md shadow-md"
                   width={24}
                   height={24}
-                />
+                  quality={100} />
                 <div className="text-sm text-gray-700">
                   <div><strong>Title:</strong> {book.judul_buku}</div>
                   <div><strong>Author:</strong> {book.penulis}</div>
@@ -141,7 +141,7 @@ export default function Home() {
                   className="w-32 h-48 object-cover rounded-md shadow-md"
                   width={32}
                   height={48}
-                />
+                  unoptimized={true} />
               </div>
             ))
           )}
