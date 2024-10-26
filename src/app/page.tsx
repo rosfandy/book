@@ -47,7 +47,7 @@ export default function Home() {
       setError("");
       setBooks([]);
 
-      const res = await axios.post(`${process.env.NEXT_APP_HOST}/api/book/recommend`, {
+      const res = await axios.post(`/api/book/recommend`, {
         title,
       });
 
