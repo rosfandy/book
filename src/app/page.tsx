@@ -35,7 +35,7 @@ export default function Home() {
   const [books, setBooks] = useState<Book[]>([]);
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent the default form submission
+    e.preventDefault();
     if (!title.trim()) {
       alert("Please enter a book title.");
       return;
@@ -53,10 +53,9 @@ export default function Home() {
 
       console.log("Response data:", res.data);
 
-      // Generate and attach thumbnail URLs to each book in order
       const bookData: Book[] = (Array.isArray(res.data) ? res.data : [res.data]).map((book, index) => ({
         ...book,
-        thumbnailUrl: getThumbnailByCategory(book.kategori, index), // Attach the thumbnail URL to each book
+        thumbnailUrl: getThumbnailByCategory(book.kategori, index),
       }));
 
       setBooks(bookData);
@@ -76,7 +75,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col gap-y-4 items-center justify-center min-h-[60vh] ">
+    <div className="flex flex-col gap-y-4 items-center justify-center min-h-[100vh] ">
       <div className="flex justify-center">
         <div className="flex flex-col justify-center text-center">
           <div className="font-bold text-2xl text-white">Selamat Datang di Pencarian Buku</div>
@@ -109,7 +108,7 @@ export default function Home() {
         </div>
       )}
       {/* Display list of books if available */}
-      {books.length > 0 && (
+      {books.length > 0 ? (
         <div className="mt-4 p-4 bg-white rounded-lg shadow-md w-[30em] ">
           <div className="font-bold text-lg mb-2">Recommended Books:</div>
           <ul className="list-none">
@@ -129,7 +128,21 @@ export default function Home() {
             ))}
           </ul>
         </div>
-      )}
+      ) :
+        <div className="flex mt-8 gap-x-4 justify-center gap-y-4 flex-wrap max-w-[50em]">
+          {Object.keys(thumbnail).map((category) =>
+            thumbnail[category].slice(0, 2).map((imageUrl, index) => (
+              <div key={`${category}-${index}`} className="bg-white rounded-md shadow-md">
+                <Image
+                  src={imageUrl || 'https://via.placeholder.com/150'}
+                  alt={`${category} thumbnail`}
+                  className="w-32 h-48 object-cover rounded-md shadow-md"
+                />
+              </div>
+            ))
+          )}
+        </div>
+      }
     </div>
   );
 }
