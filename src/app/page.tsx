@@ -25,7 +25,7 @@ const getThumbnailByCategory = (category: string, index: number): string => {
     return images[index % images.length];
   }
   // Fallback image if no category match is found
-  return 'https://via.placeholder.com/150';
+  return 'https://placehold.co/150x150.png';
 };
 
 export default function Home() {
@@ -118,6 +118,8 @@ export default function Home() {
                   src={book.thumbnailUrl || 'default-thumbnail-url.jpg'}
                   alt={`${book.kategori} thumbnail`}
                   className="w-24 h-24 object-cover rounded-md shadow-md"
+                  width={24}
+                  height={24}
                 />
                 <div className="text-sm text-gray-700">
                   <div><strong>Title:</strong> {book.judul_buku}</div>
@@ -134,9 +136,11 @@ export default function Home() {
             thumbnail[category].slice(0, 2).map((imageUrl, index) => (
               <div key={`${category}-${index}`} className="bg-white rounded-md shadow-md">
                 <Image
-                  src={imageUrl || 'https://via.placeholder.com/150'}
+                  src={imageUrl || 'https://placehold.co/150x150.png'}
                   alt={`${category} thumbnail`}
                   className="w-32 h-48 object-cover rounded-md shadow-md"
+                  width={32}
+                  height={48}
                 />
               </div>
             ))
