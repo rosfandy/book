@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
 import axios from 'axios';
+import { NextRequest } from 'next/server';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
-        const response = await axios.get('https://brosf.pythonanywhere.com/books');
+        const url = new URL(req.url);
+        const category = url.searchParams.get('category');
+
+        const endpoint = category
+            ? `${process.env.FLASK_APP_HOST}/books?category=${encodeURIComponent(category)}`
+            : `${process.env.FLASK_APP_HOST}/books`;
+
+        const response = await axios.get(endpoint);
 
         return NextResponse.json(response.data);
     } catch (error) {

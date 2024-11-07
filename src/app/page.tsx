@@ -4,7 +4,6 @@ import axios from "axios";
 import thumbnail from './thumbnail'; // Import the thumbnail object
 import Image from "next/image";
 
-// Define the type for the book object
 interface Book {
   id_buku: number;
   judul_buku: string;
@@ -17,14 +16,11 @@ interface Book {
   thumbnailUrl?: string; // Add a thumbnailUrl property to store the image URL
 }
 
-// Helper function to get a sequential thumbnail based on the category and index
 const getThumbnailByCategory = (category: string, index: number): string => {
   const images = thumbnail[category];
   if (images && images.length > 0) {
-    // Use the index to select the image in a cyclic manner
     return images[index % images.length];
   }
-  // Fallback image if no category match is found
   return 'https://placehold.co/150x150.png';
 };
 
@@ -75,7 +71,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col gap-y-4 items-center justify-center min-h-[100vh] ">
+    <div className="flex flex-col gap-y-4 items-center mt-24 min-h-[100vh] ">
       <div className="flex justify-center">
         <div className="flex flex-col justify-center text-center">
           <div className="font-bold text-2xl text-white">Selamat Datang di Pencarian Buku</div>
@@ -88,7 +84,7 @@ export default function Home() {
           <input
             type="text"
             placeholder="Judul Buku..."
-            className="text-sm px-4 py-2 w-[30em] focus:outline-none"
+            className="text-sm px-4 py-2 md:w-[30em] focus:outline-none"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -109,7 +105,7 @@ export default function Home() {
       )}
       {/* Display list of books if available */}
       {books.length > 0 ? (
-        <div className="mt-4 p-4 bg-white rounded-lg shadow-md w-[30em] ">
+        <div className="mt-4 p-4 bg-white rounded-lg shadow-md md:w-[30em] ">
           <div className="font-bold text-lg mb-2">Recommended Books:</div>
           <ul className="list-none">
             {books.map((book, index) => (
@@ -123,7 +119,7 @@ export default function Home() {
                   quality={100}
                   unoptimized={true} />
                 <div className="text-sm text-gray-700">
-                  <div><strong>Title:</strong> {book.judul_buku}</div>
+                  <div className=""><strong>Title:</strong> {book.judul_buku}</div>
                   <div><strong>Author:</strong> {book.penulis}</div>
                   <div><strong>Category:</strong> {book.kategori}</div>
                 </div>
