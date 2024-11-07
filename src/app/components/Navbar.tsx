@@ -8,7 +8,7 @@ export default function Navbar() {
             <Link href={'/'} className="font-bold text-lg text-white">E-Library</Link>
             <div className="flex gap-x-2 text-white">
                 {categories.map((category, index) => (
-                    <Link key={index} href={`/book?category=${category.toLowerCase()}`}>
+                    <Link key={index} href={`/book/${category.toLowerCase()}`}>
                         {category}
                     </Link>
                 ))}
