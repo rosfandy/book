@@ -1,16 +1,15 @@
+import axios from "axios";
+import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import axios, { AxiosError } from 'axios';
-import { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
+    const slug = req.nextUrl.pathname.split('/').pop();
+    if (!slug) {
+        return NextResponse.json({ error: "Category slug is required." }, { status: 400 });
+    }
+
     try {
-        const url = new URL(req.url);
-        const category = url.searchParams.get('category');
-        const endpoint = category
-            ? `${process.env.FLASK_APP_HOST}/books?category=${encodeURIComponent(category)}`
-            : `${process.env.FLASK_APP_HOST}/books`;
-        const response = await axios.get(endpoint);
-        
+        const response = await axios.get(`${process.env.FLASK_APP_HOST}/books/${slug}`);
         return NextResponse.json(response.data);
     } catch (error) {
         if (axios.isAxiosError(error)) {

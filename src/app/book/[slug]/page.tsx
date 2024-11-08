@@ -16,16 +16,31 @@ interface Book {
     user: string;
 }
 
+/**
+ * Renders a paginated list of books based on the category extracted from the URL slug.
+ * 
+ * Utilizes a `Suspense` component for lazy loading and displays a loading indicator
+ * while fetching the data. If an error occurs during data fetching, an error message
+ * is displayed. The books are displayed in a table format with pagination controls.
+ * 
+ * State:
+ * - `books`: Array of Book objects representing the fetched books.
+ * - `error`: Error message string if data fetching fails.
+ * - `currentPage`: Current page number for pagination.
+ * 
+ * Effects:
+ * - Fetches books data from the API based on the category slug in the URL.
+ * 
+ * @returns JSX element containing the book list and pagination controls.
+ */
 export default function Books() {
     const [books, setBooks] = useState<Book[]>([]);
     const [error, setError] = useState<string>("");
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pathname = usePathname();
     const itemsPerPage = 10;
-
-    // Extract the slug from the pathname
     const slug = pathname?.split('/').pop();
-
+    
     useEffect(() => {
         if (!slug) {
             setError("Category slug is required.");
@@ -37,7 +52,7 @@ export default function Books() {
                 const response = await axios.get(`/api/book?category=${slug}`);
                 setBooks(response.data);
             } catch (err) {
-                console.error("Error fetching data:", err);
+                console.log("Error fetching data:", err);
                 setError("Failed to load books data.");
             }
         };

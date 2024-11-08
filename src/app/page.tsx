@@ -1,8 +1,9 @@
-"use client"
+'use client'
 import { useState } from "react";
 import axios from "axios";
 import thumbnail from './thumbnail'; // Import the thumbnail object
 import Image from "next/image";
+import Link from "next/link";
 
 interface Book {
   id_buku: number;
@@ -29,6 +30,7 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [books, setBooks] = useState<Book[]>([]);
+  const [searchCompleted, setSearchCompleted] = useState<boolean>(false);
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,11 +39,11 @@ export default function Home() {
       return;
     }
 
-
     try {
       setLoading(true);
       setError("");
       setBooks([]);
+      setSearchCompleted(false);
 
       const res = await axios.post(`/api/book/recommend`, {
         title,
@@ -49,12 +51,19 @@ export default function Home() {
 
       console.log("Response data:", res.data);
 
+      if (res.data?.[0]?.error) {
+        setError("Tidak ada buku yang sesuai");
+        setSearchCompleted(true);
+        return;
+      }
+
       const bookData: Book[] = (Array.isArray(res.data) ? res.data : [res.data]).map((book, index) => ({
         ...book,
         thumbnailUrl: getThumbnailByCategory(book.kategori, index),
       }));
 
       setBooks(bookData);
+      setSearchCompleted(true);
       setTitle("");
     } catch (err) {
       console.error("Error during the search:", err);
@@ -71,7 +80,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col gap-y-4 items-center mt-24 min-h-[100vh] ">
+    <div className="flex flex-col gap-y-4 items-center mt-24 min-h-[100vh] pb-8">
       <div className="flex justify-center">
         <div className="flex flex-col justify-center text-center">
           <div className="font-bold text-2xl text-white">Selamat Datang di Pencarian Buku</div>
@@ -79,7 +88,6 @@ export default function Home() {
         </div>
       </div>
       <div className="flex justify-center">
-        {/* Use a form and handle submission */}
         <form onSubmit={handleSearch} className="flex items-center bg-white pl-4 shadow-md rounded-xl">
           <input
             type="text"
@@ -89,7 +97,7 @@ export default function Home() {
             onChange={(e) => setTitle(e.target.value)}
           />
           <button
-            type="submit" // Change button type to submit
+            type="submit"
             className="text-sm bg-blue-500 shadow-md text-white px-6 py-3 rounded-md"
             disabled={loading}
           >
@@ -97,37 +105,40 @@ export default function Home() {
           </button>
         </form>
       </div>
-      {/* Show error if any */}
       {error && (
         <div className="mt-4 p-4 bg-red-100 rounded-lg shadow-md">
-          <div className="text-sm text-red-700">Error: {error}</div>
+          <div className="text-sm text-red-700">{error}</div>
         </div>
       )}
-      {/* Display list of books if available */}
-      {books.length > 0 ? (
+      {searchCompleted && books.length === 0 && !error ? (
+        <div className="mt-4 p-4 bg-white rounded-lg shadow-md md:w-[30em] text-center text-gray-500">
+          No books found.
+        </div>
+      ) : books.length > 0 ? (
         <div className="mt-4 p-4 bg-white rounded-lg shadow-md md:w-[30em] ">
           <div className="font-bold text-lg mb-2">Recommended Books:</div>
           <ul className="list-none">
             {books.map((book, index) => (
-              <li key={index} className="flex gap-4 mb-4">
+              <Link href={`/book/detail/${book.id_buku}`} key={index} className="flex gap-4 mb-4">
                 <Image
-                  src={book.thumbnailUrl || 'default-thumbnail-url.jpg'}
+                  src={book.thumbnailUrl || 'https://placehold.co/150x150.png'}
                   alt={`${book.kategori} thumbnail`}
                   className="w-24 h-24 object-cover rounded-md shadow-md"
                   width={24}
                   height={24}
                   quality={100}
-                  unoptimized={true} />
+                  unoptimized={true}
+                />
                 <div className="text-sm text-gray-700">
-                  <div className=""><strong>Title:</strong> {book.judul_buku}</div>
+                  <div><strong>Title:</strong> {book.judul_buku}</div>
                   <div><strong>Author:</strong> {book.penulis}</div>
                   <div><strong>Category:</strong> {book.kategori}</div>
                 </div>
-              </li>
+              </Link>
             ))}
           </ul>
         </div>
-      ) :
+      ) : (
         <div className="flex mt-8 gap-x-4 justify-center gap-y-4 flex-wrap max-w-[50em]">
           {Object.keys(thumbnail).map((category) =>
             thumbnail[category].slice(0, 2).map((imageUrl, index) => (
@@ -138,12 +149,13 @@ export default function Home() {
                   className="w-32 h-48 object-cover rounded-md shadow-md"
                   width={32}
                   height={48}
-                  unoptimized={true} />
+                  unoptimized={true}
+                />
               </div>
             ))
           )}
         </div>
-      }
+      )}
     </div>
   );
 }
