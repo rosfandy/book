@@ -57,10 +57,12 @@ export default function Home() {
         return;
       }
 
-      const bookData: Book[] = (Array.isArray(res.data) ? res.data : [res.data]).map((book, index) => ({
-        ...book,
-        thumbnailUrl: getThumbnailByCategory(book.kategori, index),
-      }));
+      const bookData: Book[] = (Array.isArray(res.data) ? res.data : [res.data])
+        .map((book, index) => ({
+          ...book,
+          thumbnailUrl: getThumbnailByCategory(book.kategori, index),
+        }))
+        .sort((a, b) => b.rating - a.rating);
 
       setBooks(bookData);
       setSearchCompleted(true);
