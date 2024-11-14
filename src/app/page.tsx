@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react";
 import axios from "axios";
-import thumbnail from './thumbnail'; // Import the thumbnail object
+import thumbnail from './thumbnail';
 import Image from "next/image";
 
 interface Book {
@@ -13,7 +13,7 @@ interface Book {
   tahun_terbit: number;
   deskripsi: string;
   similarity_score: number;
-  thumbnailUrl?: string; // Add a thumbnailUrl property to store the image URL
+  thumbnailUrl?: string;
 }
 
 const getThumbnailByCategory = (category: string, index: number): string => {
@@ -37,7 +37,6 @@ export default function Home() {
       return;
     }
 
-
     try {
       setLoading(true);
       setError("");
@@ -47,12 +46,12 @@ export default function Home() {
         title,
       });
 
-      console.log("Response data:", res.data);
-
-      const bookData: Book[] = (Array.isArray(res.data) ? res.data : [res.data]).map((book, index) => ({
-        ...book,
-        thumbnailUrl: getThumbnailByCategory(book.kategori, index),
-      }));
+      const bookData: Book[] = (Array.isArray(res.data) ? res.data : [res.data])
+        .map((book, index) => ({
+          ...book,
+          thumbnailUrl: getThumbnailByCategory(book.kategori, index),
+        }))
+        .sort((a, b) => b.rating - a.rating);
 
       setBooks(bookData);
       setTitle("");
@@ -89,7 +88,7 @@ export default function Home() {
             onChange={(e) => setTitle(e.target.value)}
           />
           <button
-            type="submit" // Change button type to submit
+            type="submit"
             className="text-sm bg-blue-500 shadow-md text-white px-6 py-3 rounded-md"
             disabled={loading}
           >
@@ -122,6 +121,7 @@ export default function Home() {
                   <div className=""><strong>Title:</strong> {book.judul_buku}</div>
                   <div><strong>Author:</strong> {book.penulis}</div>
                   <div><strong>Category:</strong> {book.kategori}</div>
+                  <div><strong>Rating:</strong> {book.rating}</div>
                 </div>
               </li>
             ))}
